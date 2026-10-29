@@ -16,6 +16,9 @@ Enter a new project **title + abstract**. The system:
 1. Embeds it with Sentence-Transformers (`all-MiniLM-L6-v2`)
 2. Searches a **FAISS** index of past department projects + live **arXiv** and **GitHub** results
 3. Returns a **Novelty Score (0–100)**, a verdict, and the **closest matches** with cosine similarity — so a student/faculty can see *why* an idea looks novel or duplicate, early.
+4. Adds a **topic-crowdedness reading** (neighbourhood density over the department corpus, after Wang et al. 2025) and a plain-language **explanation** of the verdict — closest prior work vs the evaluation-derived 0.55 duplicate threshold, plus the shared concepts behind each match.
+
+See `EXPLANATION.md` for the pitch, technique justifications and viva Q&A, and `RESEARCH_PAPERS.md` for the annotated 12-paper literature pack.
 
 Verdicts: `>=70` Highly Novel · `45–69` Moderately Novel — differentiate clearly · `<45` Low Novelty — very similar work exists
 

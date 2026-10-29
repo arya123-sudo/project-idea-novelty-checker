@@ -71,7 +71,9 @@ Backend: FastAPI. Frontend: single-page web UI for students/faculty. If SBERT is
 - `app/indexer.py` — FAISS `IndexFlatIP` over the department corpus (36 sample projects in the demo dataset; to be replaced by the real department archive).
 - `app/external.py` — live arXiv API and GitHub Search API calls; keyword candidates are **re-ranked by embedding similarity**, which is what surfaces paraphrases that keyword ranking alone buries.
 - `app/main.py` — `POST /api/check` returning score, verdict and top matches across all three sources.
-- `evaluation/evaluate.py` — metrics on labeled pairs.
+- `app/indexer.py` also computes **neighbourhood density**: mean similarity to the 5 nearest department projects (topic *crowdedness*, inspired by Wang et al. 2025), reported alongside the score.
+- `app/main.py` generates an **evidence explanation** for every verdict — closest prior work vs the 0.55 duplicate threshold, crowdedness reading, and the distinctive shared concepts per match — so the verdict can be argued with, not just accepted.
+- `evaluation/evaluate.py` — metrics on labeled pairs; `evaluation/retrieval_eval.py` — DPR-style retrieval evaluation.
 
 ## 6. Results and Evaluation
 
@@ -89,6 +91,17 @@ Evaluation set: **60 labeled pairs** (30 similar — same idea, mostly paraphras
 Similarity distributions explain the gap. SBERT places similar pairs at **0.498–0.885** (mean 0.680) and different pairs at **−0.064–0.280** (mean 0.056) — a wide, safe separation margin. TF-IDF compresses similar pairs to **0.000–0.260**: a paraphrase written in different words is nearly invisible to it, and its F1 collapses from 0.868 to 0.125 as the threshold rises from 0.05 to 0.15. This is the empirical justification for SBERT in the methodology: **the novelty signal lives in meaning, not shared words.**
 
 At the operating threshold 0.55, SBERT missed 2 of 30 similar pairs (college-enquiry chatbot paraphrase, 0.512; phishing-detection paraphrase, 0.498). A threshold scan shows F1 = 1.000 at 0.30 on this set; we keep 0.55 as the operating point because wrongly branding a student's idea a "duplicate" is the costlier error, and borderline cases are exactly what the closest-matches display is for — the guide sees the evidence, not just the number.
+
+**Retrieval evaluation (deployment-realistic).** Each paraphrased idea from the 30 similar pairs was queried against the department corpus plus its original; we measured the rank of the first item from the same idea family:
+
+| Method | Recall@1 | Recall@3 | MRR |
+|---|---|---|---|
+| SBERT (this system) | 0.433 | **1.000** | **0.711** |
+| TF-IDF (baseline) | 0.500 | 0.867 | 0.697 |
+
+TF-IDF occasionally wins rank 1 on exact title wording, but it loses the original entirely from the top 3 in 4 of 30 cases. For a novelty checker the missed duplicate is the costly error — SBERT never misses: a same-idea item is in the top 3 for every reworded query, at 0.85–0.88 similarity against 0.22–0.39 for the nearest unrelated project.
+
+**Crowdedness in practice.** The density lens separates cases the headline score cannot: crop-disease scores local crowding 0.63 (a saturated area — differentiation is mandatory), while beehive acoustics scores 0.30 (open area). Both readings are shown to the user with the verdict.
 
 **Deployment:** the system is deployed publicly on Render (free tier) at https://project-idea-novelty-checker.onrender.com, running the same MiniLM model in ONNX form (`sbert-onnx` backend — no torch, fits 512 MB RAM). The live deployment reproduces the local results exactly: the crop-disease check below returns novelty 8.7 with max similarity 0.9127 on both the local torch backend and the deployed ONNX backend, and the full three-source check completes live in ~16 s.
 

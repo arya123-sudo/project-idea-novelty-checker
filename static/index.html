@@ -51,6 +51,8 @@
       <div><div class="score" id="score">–</div><div style="color:#9aa3c0;font-size:12px">NOVELTY SCORE / 100</div></div>
       <div style="flex:1;min-width:220px"><div class="verdict" id="verdict"></div><div class="bar"><div class="fill" id="fill"></div></div></div>
     </div>
+    <div id="explain" style="background:#12172e;border:1px solid #2c3355;border-radius:8px;padding:12px 14px;margin-top:16px;font-size:14px;line-height:1.5"></div>
+    <div id="density" style="margin-top:10px;font-size:13px;color:#9aa3c0"></div>
     <h3 style="margin:20px 0 4px">Closest Matches</h3>
     <div id="matches"></div>
   </div>
@@ -70,10 +72,13 @@ $('go').onclick=async()=>{
     $('verdict').textContent=d.verdict;
     const col=d.novelty_score>=70?'#2ecc71':d.novelty_score>=45?'#f5b942':'#e74c3c';
     $('fill').style.width=d.novelty_score+'%'; $('fill').style.background=col; $('score').style.color=col;
+    $('explain').textContent='Why this verdict: '+d.explanation;
+    const dn=d.density||{}; $('density').textContent=`Topic crowdedness check — uncrowdedness score ${dn.crowdedness_score}/100 (avg similarity to 5 nearest department projects: ${((dn.local_crowding||0)*100).toFixed(0)}%). High crowding means the area is heavily worked even without one exact duplicate.`;
     $('matches').innerHTML=d.closest_matches.map(m=>`
       <div class="match"><span class="sim" style="color:${m.similarity>=0.7?'#e74c3c':m.similarity>=0.45?'#f5b942':'#2ecc71'}">${(m.similarity*100).toFixed(0)}% similar</span>
       <span class="src">${m.source}${m.year?' · '+m.year:''}</span><b>${m.url?`<a href="${m.url}" target="_blank">${m.title}</a>`:m.title}</b>
-      <div class="abs">${(m.abstract||'').slice(0,220)}</div></div>`).join('')||'<p>No matches found.</p>';
+      <div class="abs">${(m.abstract||'').slice(0,220)}</div>
+      ${(m.shared_terms&&m.shared_terms.length)?`<div style="margin-top:4px">${m.shared_terms.map(t=>`<span style="background:#232949;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px">${t}</span>`).join('')}</div>`:''}</div>`).join('')||'<p>No matches found.</p>';
     $('result').classList.remove('hidden');
   }catch(e){ alert('Server error — is the backend running?'); }
   $('go').disabled=false; $('status').textContent='';
