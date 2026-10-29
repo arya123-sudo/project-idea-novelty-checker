@@ -25,7 +25,7 @@ def main():
     vb = emb.encode([r["idea_b"] for r in rows])
     sims = (va * vb).sum(axis=1)
     y = [int(r["label"]) for r in rows]
-    thr = 0.55 if emb.backend == "sbert" else THRESHOLD
+    thr = 0.55 if emb.backend in ("sbert", "sbert-onnx") else THRESHOLD
     pred = [1 if s >= thr else 0 for s in sims]
     print(f"Threshold: {thr}")
     print(f"ROC-AUC  : {roc_auc_score(y, sims):.3f}")
