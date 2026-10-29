@@ -2,6 +2,9 @@
 
 Mini Project — Department of AI & ML, Acharya Institute of Technology, Bengaluru
 
+## 🔴 Live Demo
+**https://project-idea-novelty-checker.onrender.com** — deployed on Render (free tier, ONNX SBERT backend). Note: the free instance sleeps when idle, so the first load can take ~30–60 s to wake; checks then run in ~1 s (dept) to ~15 s (with live arXiv + GitHub).
+
 **Team:** Arya R Yaligar (1AY24AI012) · Bhargav Raj (1AY24AI019) · D Bargav (1AY24AI028) · G Vajresh Shenoy (1AY24AI034)
 **Guide:** Mr. Praveen Arokiaraj, Assistant Professor, Dept. of AI & ML
 

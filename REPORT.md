@@ -83,6 +83,8 @@ Similarity distributions explain the gap. SBERT places similar pairs at **0.498�
 
 At the operating threshold 0.55, SBERT missed 2 of 30 similar pairs (college-enquiry chatbot paraphrase, 0.512; phishing-detection paraphrase, 0.498). A threshold scan shows F1 = 1.000 at 0.30 on this set; we keep 0.55 as the operating point because wrongly branding a student's idea a "duplicate" is the costlier error, and borderline cases are exactly what the closest-matches display is for — the guide sees the evidence, not just the number.
 
+**Deployment:** the system is deployed publicly on Render (free tier) at https://project-idea-novelty-checker.onrender.com, running the same MiniLM model in ONNX form (`sbert-onnx` backend — no torch, fits 512 MB RAM). The live deployment reproduces the local results exactly: the crop-disease check below returns novelty 8.7 with max similarity 0.9127 on both the local torch backend and the deployed ONNX backend, and the full three-source check completes live in ~16 s.
+
 Worked examples (live system, all three sources):
 - "Crop Disease Detection using Deep Learning" (reworded abstract) → **Novelty 8.7 / Low Novelty**. Closest matches: Department *Crop Disease Detection using Deep Learning* (0.913), Department *Plant Leaf Disease Classification with CNN* (0.840), GitHub `Shubham-Jain-09/Crop-Disease-Detection` (0.822), arXiv *Detecting Multiple Diseases in Multiple Crops Using Deep Learning* (0.807).
 - A genuinely new idea (beehive health monitoring via acoustic sensors) → **Novelty 56.6 / Moderately Novel**, closest department match only 0.434 — no close prior work in any source.
