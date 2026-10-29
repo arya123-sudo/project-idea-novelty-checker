@@ -35,8 +35,15 @@ This project builds an automated, objective way to measure the novelty of a proj
 | Reimers & Gurevych, 2019 — Sentence-BERT | Siamese BERT networks producing sentence embeddings comparable with cosine similarity — the embedding method used here. |
 | Johnson et al., 2019 — FAISS | Billion-scale similarity search; used here for nearest-neighbour retrieval over the project corpus. |
 | Karpukhin et al., 2020 — Dense Passage Retrieval | Shows dense embeddings outperform keyword (BM25-style) retrieval for semantic matching. |
-| Shibayama et al., 2021 | Embedding-based measurement of scientific novelty — novelty as distance in embedding space, the principle behind our score. |
-| Liu et al., 2025 | LLM-based novelty assessment — qualitative verdicts; our work differs by giving a deterministic, evaluated pipeline. |
+| Shibayama et al., 2021 | Embedding-based measurement of scientific novelty — novelty as distance in embedding space, validated against self-reported novelty and future citations; the principle behind our score. |
+| Uzzi et al., 2013 — Science | Atypical combinations of prior work predict high impact across 17.9M papers — novelty is quantitatively measurable against a prior-work corpus. |
+| Cohan et al., 2020 — SPECTER (+ SPECTER2, 2023) | Scientific-document embeddings from title+abstract trained with citation signals; the named upgrade for our arXiv side. |
+| Si, Yang & Hashimoto, 2025 — ICLR | 100+ researchers, human vs LLM ideas: LLM ideas judged more novel, but ~95% of generated ideas were duplicates after deduplication, and LLM self-evaluation of novelty fails — motivation for an independent checker. |
+| Wang et al., 2025 — Relative Neighbor Density | Embedding-neighbourhood-density novelty scoring (AUROC 0.820 CS); documents that LLM-as-judge novelty ratings flip when the same idea is rephrased — support for a deterministic pipeline. |
+| NoveltyRank, 2025 | Closest published system: retrieval + SPECTER2 embeddings + novelty estimation over 60k papers; venue acceptance as proxy label, chronological splits. Differs from ours in target: research papers vs student project ideas against an institutional archive. |
+| What Is Novel?, 2026; All That Glitters is Not Novel, 2025 | Hybrid retrieval + fine-tuned-judge novelty evaluation with idea-level plagiarism detection; and evidence that LLM-generated research often duplicates prior work in ways LLM detectors miss but corpus similarity catches. |
+
+Full annotated pack: `RESEARCH_PAPERS.md` in this repository.
 
 **Differentiation.** Plagiarism checkers (e.g. Turnitin) match exact text, not ideas. Patent tools work in a different domain. No public tool covers a department's own past-project archive — the corpus where most "already done" rejections actually come from. Our defensible claim is the combination: **department corpus + arXiv + GitHub, with a calibrated, evaluated similarity pipeline**. We do not claim semantic novelty checking itself is new.
 
@@ -108,8 +115,15 @@ The system demonstrates that idea-level semantic matching catches duplicates tha
 
 ## References
 
-1. Reimers, N. & Gurevych, I. (2019). Sentence-BERT. EMNLP-IJCNLP.
-2. Johnson, J., Douze, M. & Jégou, H. (2019). Billion-scale similarity search with GPUs (FAISS). IEEE TBD.
-3. Karpukhin, V. et al. (2020). Dense Passage Retrieval for Open-Domain QA. EMNLP.
-4. Shibayama, S. et al. (2021). Measuring novelty in science with word embedding. PLoS ONE / Scientometrics line of work.
-5. Liu et al. (2025). LLM-based research novelty detection.
+1. Reimers, N. & Gurevych, I. (2019). Sentence-BERT: Sentence Embeddings using Siamese BERT Networks. EMNLP-IJCNLP. arXiv:1908.10084.
+2. Johnson, J., Douze, M. & Jégou, H. (2019). Billion-scale similarity search with GPUs. IEEE Transactions on Big Data. arXiv:1702.08734.
+3. Karpukhin, V. et al. (2020). Dense Passage Retrieval for Open-Domain Question Answering. EMNLP. arXiv:2004.04906.
+4. Shibayama, S., Yin, D. & Matsumoto, K. (2021). Measuring novelty in science with word embedding. PLoS ONE, 16(7), e0254034.
+5. Uzzi, B., Mukherjee, S., Stringer, M. & Jones, B. (2013). Atypical combinations and scientific impact. Science, 342(6157), 468–472.
+6. Cohan, A. et al. (2020). SPECTER: Document-level Representation Learning using Citation-informed Transformers. ACL. arXiv:2004.07180.
+7. Singh, A. et al. (2023). SciRepEval: A Multi-Format Benchmark for Scientific Document Representations (SPECTER2). arXiv:2211.13308.
+8. Si, C., Yang, D. & Hashimoto, T. (2025). Can LLMs Generate Novel Research Ideas? A Large-Scale Human Study with 100+ NLP Researchers. ICLR. arXiv:2409.04109.
+9. Wang, Y., Cui, M., Jiang, A. & Yan, J. (2025). Enabling AI Scientists to Recognize Innovation: A Domain-Agnostic Algorithm for Assessing Novelty. arXiv:2503.01508.
+10. NoveltyRank: A Retrieval-Augmented Framework for Conceptual Novelty Estimation in AI Research (2025). arXiv:2512.14738.
+11. What Is Novel? A Knowledge-Driven Framework for Bias-Aware Literature Originality Evaluation (2026). arXiv:2602.06054.
+12. All That Glitters is Not Novel: Plagiarism in AI-Generated Research (2025). arXiv:2502.16487.
