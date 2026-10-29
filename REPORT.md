@@ -70,15 +70,22 @@ Backend: FastAPI. Frontend: single-page web UI for students/faculty. If SBERT is
 
 Evaluation set: **60 labeled pairs** (30 similar — same idea, mostly paraphrased; 30 different — unrelated ideas).
 
-<!-- RESULTS:SBERT — filled from the actual SBERT run -->
-_(To be filled from the SBERT evaluation run.)_
+**SBERT results (all-MiniLM-L6-v2, threshold 0.55):**
 
-<!-- RESULTS:TFIDF -->
-TF-IDF fallback (20-pair pilot set): ROC-AUC 1.000, Precision 1.000, Recall 1.000, F1 1.000 — but with a revealing weakness: paraphrase pairs scored only **0.08–0.28** cosine similarity (vs 0.00–0.02 for unrelated pairs). TF-IDF separates the two classes on this small set only because unrelated pairs share almost no words; its margins are thin and it cannot recognise a paraphrase written in completely different vocabulary. This is the empirical justification for SBERT in the methodology.
+| Metric | SBERT | TF-IDF (same 60 pairs) |
+|---|---|---|
+| ROC-AUC | **1.000** | 0.933 |
+| Precision | **1.000** | 1.000 |
+| Recall | **0.933** | 0.767 |
+| F1 | **0.966** | 0.868 |
 
-Worked examples (live system):
-- "Face Recognition Attendance" (a known past project, reworded) → **Novelty 45.3**, closest match: the department's own *Smart Attendance System using Face Recognition*.
-- A genuinely new idea (beehive health monitoring via acoustic sensors) → high novelty, no close department match.
+Similarity distributions explain the gap. SBERT places similar pairs at **0.498–0.885** (mean 0.680) and different pairs at **−0.064–0.280** (mean 0.056) — a wide, safe separation margin. TF-IDF compresses similar pairs to **0.000–0.260**: a paraphrase written in different words is nearly invisible to it, and its F1 collapses from 0.868 to 0.125 as the threshold rises from 0.05 to 0.15. This is the empirical justification for SBERT in the methodology: **the novelty signal lives in meaning, not shared words.**
+
+At the operating threshold 0.55, SBERT missed 2 of 30 similar pairs (college-enquiry chatbot paraphrase, 0.512; phishing-detection paraphrase, 0.498). A threshold scan shows F1 = 1.000 at 0.30 on this set; we keep 0.55 as the operating point because wrongly branding a student's idea a "duplicate" is the costlier error, and borderline cases are exactly what the closest-matches display is for — the guide sees the evidence, not just the number.
+
+Worked examples (live system, all three sources):
+- "Crop Disease Detection using Deep Learning" (reworded abstract) → **Novelty 8.7 / Low Novelty**. Closest matches: Department *Crop Disease Detection using Deep Learning* (0.913), Department *Plant Leaf Disease Classification with CNN* (0.840), GitHub `Shubham-Jain-09/Crop-Disease-Detection` (0.822), arXiv *Detecting Multiple Diseases in Multiple Crops Using Deep Learning* (0.807).
+- A genuinely new idea (beehive health monitoring via acoustic sensors) → **Novelty 56.6 / Moderately Novel**, closest department match only 0.434 — no close prior work in any source.
 
 ## 7. Limitations
 

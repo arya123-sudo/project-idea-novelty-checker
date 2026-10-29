@@ -5,10 +5,22 @@ their keyword search are re-ranked by embedding cosine similarity against the
 query — that is what catches paraphrases keyword ranking alone would bury.
 Failures (offline, rate-limit) return [] instead of breaking the check.
 """
+import os
 import re
 import httpx
 
 TIMEOUT = 12.0
+
+
+def _client(**kw):
+    # httpx crashes parsing NO_PROXY values that contain bracketed IPv6
+    # entries like [::1] (some sandboxes/CI set them). Strip only those
+    # entries, in-process; on a normal machine this is a no-op.
+    for var in ("no_proxy", "NO_PROXY"):
+        v = os.environ.get(var)
+        if v and "[" in v:
+            os.environ[var] = ",".join(p for p in v.split(",") if "[" not in p)
+    return httpx.AsyncClient(timeout=TIMEOUT, follow_redirects=True, trust_env=True, **kw)
 
 
 def _keywords(title: str, abstract: str, n=8):
@@ -33,7 +45,7 @@ async def search_arxiv(title, abstract, embedder, query_vec, k=3):
     q = "+AND+".join(f"all:{w}" for w in words[:3])
     url = f"https://export.arxiv.org/api/query?search_query={q}&start=0&max_results=8"
     try:
-        async with httpx.AsyncClient(timeout=TIMEOUT, follow_redirects=True, headers=HEADERS) as c:
+        async with _client(headers=HEADERS) as c:
             r = await c.get(url)
             r.raise_for_status()
         import xml.etree.ElementTree as ET
@@ -56,7 +68,7 @@ async def search_github(title, abstract, embedder, query_vec, k=3):
     if not q:
         return []
     try:
-        async with httpx.AsyncClient(timeout=TIMEOUT, follow_redirects=True, headers={"Accept": "application/vnd.github+json", **HEADERS}) as c:
+        async with _client(headers={"Accept": "application/vnd.github+json", **HEADERS}) as c:
             r = await c.get(f"https://api.github.com/search/repositories?q={q}&per_page=8")
             r.raise_for_status()
         cands = [{

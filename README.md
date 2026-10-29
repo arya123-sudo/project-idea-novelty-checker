@@ -48,7 +48,12 @@ API: `POST /api/check`  `{"title": "...", "abstract": "...", "check_external": t
 ```bash
 python evaluation/evaluate.py
 ```
-Uses `data/labeled_pairs.csv` (similar = paraphrase/same idea, different = unrelated) and prints ROC-AUC, Precision, Recall, F1 at the operating threshold.
+Uses `data/labeled_pairs.csv` — **60 labeled pairs** (30 similar/paraphrased, 30 different) — and prints ROC-AUC, Precision, Recall, F1 at the operating threshold.
+
+**Measured results (SBERT, threshold 0.55): ROC-AUC 1.000 · Precision 1.000 · Recall 0.933 · F1 0.966**
+TF-IDF fallback on the same set: ROC-AUC 0.933 · F1 0.868 — see `REPORT.md` §6 for the full comparison and why SBERT matters for paraphrases.
+
+Live check example — "Crop Disease Detection using Deep Learning" → **Novelty 8.7 (Low Novelty)**, matched against the dept corpus (0.913), GitHub repos (0.822) and arXiv papers (0.807) in one result list.
 
 ## Data
 - `data/dept_projects.json` — sample department corpus (replace/extend with the real department archive — this is the project's unique corpus no public tool has)
