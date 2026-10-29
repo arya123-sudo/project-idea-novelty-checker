@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Novelty Checker — Dept. of AI & ML, Acharya Institute of Technology</title>
+<style>
+  *{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#0f1220;color:#eef0f8}
+  header{padding:22px 20px 6px;text-align:center}
+  header h1{margin:0;font-size:26px} header p{color:#9aa3c0;margin:6px 0 0;font-size:14px}
+  .wrap{max-width:860px;margin:0 auto;padding:18px}
+  .card{background:#171b2e;border:1px solid #262c47;border-radius:14px;padding:18px;margin-bottom:16px}
+  label{display:block;font-size:13px;color:#9aa3c0;margin:10px 0 6px}
+  input,textarea{width:100%;background:#0f1220;border:1px solid #333a5c;border-radius:10px;color:#fff;padding:11px;font-size:15px}
+  textarea{min-height:110px;resize:vertical}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:14px}
+  button{background:#4f6df5;color:#fff;border:0;border-radius:10px;padding:12px 20px;font-size:15px;font-weight:600;cursor:pointer}
+  button:disabled{opacity:.5}
+  .chk{font-size:14px;color:#c6cbe0}
+  .score{font-size:52px;font-weight:800;line-height:1}
+  .verdict{font-size:17px;font-weight:600;margin-top:6px}
+  .bar{height:12px;background:#262c47;border-radius:99px;overflow:hidden;margin-top:12px}
+  .fill{height:100%;border-radius:99px;transition:width .6s}
+  .match{border:1px solid #262c47;border-radius:10px;padding:12px;margin-top:10px;background:#12162a}
+  .match b{font-size:15px} .sim{float:right;font-weight:700}
+  .src{display:inline-block;font-size:11px;padding:2px 8px;border-radius:99px;background:#2a3157;color:#b9c2e8;margin-right:6px}
+  .abs{color:#9aa3c0;font-size:13px;margin-top:5px}
+  a{color:#8fa8ff} .hidden{display:none} .note{color:#77809f;font-size:12px;text-align:center;padding-bottom:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>🔍 AI-Based Project Idea Novelty Checker</h1>
+  <p>Department of AI &amp; ML · Acharya Institute of Technology — check an idea <i>before</i> it's rejected as "already done"</p>
+</header>
+<div class="wrap">
+  <div class="card">
+    <label>Project Title</label>
+    <input id="title" placeholder="e.g. Smart Attendance System using Face Recognition">
+    <label>Abstract / Idea Description</label>
+    <textarea id="abstract" placeholder="Describe what the project does, the method, and who it is for..."></textarea>
+    <div class="row">
+      <button id="go">Check Novelty</button>
+      <label class="chk"><input type="checkbox" id="ext" checked style="width:auto"> Also search arXiv + GitHub (live)</label>
+      <span id="status" class="chk"></span>
+    </div>
+  </div>
+
+  <div class="card hidden" id="result">
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+      <div><div class="score" id="score">–</div><div style="color:#9aa3c0;font-size:12px">NOVELTY SCORE / 100</div></div>
+      <div style="flex:1;min-width:220px"><div class="verdict" id="verdict"></div><div class="bar"><div class="fill" id="fill"></div></div></div>
+    </div>
+    <h3 style="margin:20px 0 4px">Closest Matches</h3>
+    <div id="matches"></div>
+  </div>
+  <p class="note">Semantic matching with Sentence-Transformers + FAISS — paraphrased duplicates are caught even when keywords differ.</p>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+$('go').onclick=async()=>{
+  const title=$('title').value.trim(), abstract=$('abstract').value.trim();
+  if(!title||!abstract){alert('Enter both a title and an abstract.');return;}
+  $('go').disabled=true; $('status').textContent='Embedding + searching dept, arXiv, GitHub…';
+  try{
+    const r=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title,abstract,check_external:$('ext').checked})});
+    const d=await r.json();
+    $('score').textContent=d.novelty_score;
+    $('verdict').textContent=d.verdict;
+    const col=d.novelty_score>=70?'#2ecc71':d.novelty_score>=45?'#f5b942':'#e74c3c';
+    $('fill').style.width=d.novelty_score+'%'; $('fill').style.background=col; $('score').style.color=col;
+    $('matches').innerHTML=d.closest_matches.map(m=>`
+      <div class="match"><span class="sim" style="color:${m.similarity>=0.7?'#e74c3c':m.similarity>=0.45?'#f5b942':'#2ecc71'}">${(m.similarity*100).toFixed(0)}% similar</span>
+      <span class="src">${m.source}${m.year?' · '+m.year:''}</span><b>${m.url?`<a href="${m.url}" target="_blank">${m.title}</a>`:m.title}</b>
+      <div class="abs">${(m.abstract||'').slice(0,220)}</div></div>`).join('')||'<p>No matches found.</p>';
+    $('result').classList.remove('hidden');
+  }catch(e){ alert('Server error — is the backend running?'); }
+  $('go').disabled=false; $('status').textContent='';
+};
+</script>
+</body>
+</html>

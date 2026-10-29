@@ -1,0 +1,61 @@
+idea_a,idea_b,label
+Smart Attendance System using Face Recognition. Camera identifies students and marks attendance automatically.,Automatic attendance where a camera recognises student faces and records presence without manual roll call.,1
+Crop Disease Detection using Deep Learning. CNN classifies leaf photos to find plant diseases.,A neural network that looks at pictures of crop leaves and tells farmers which disease the plant has.,1
+Fake News Detection using Machine Learning. Classifier labels news articles fake or real.,Detecting misinformation in news stories with a text classification model.,1
+Credit Card Fraud Detection. Models flag fraudulent transactions in banking data.,Identifying fraudulent card payments using machine learning on transaction records.,1
+Sign Language Translator. Hand gestures are converted to text and speech.,Translating hand sign gestures into written words and spoken output for the deaf community.,1
+Stock Price Prediction using LSTM. Forecasts share prices from history.,Using a recurrent neural network to predict future stock market prices from past data.,1
+Driver Drowsiness Detection. Camera watches eyes and yawns and alarms the driver.,A system that detects when a driver is sleepy from face video and warns them.,1
+Brain Tumour Detection from MRI. Deep learning finds tumours in brain scans.,Finding brain tumours in MRI images with a deep learning model to help doctors.,1
+Phishing Website Detection. Classifier spots fake websites from URL features.,Detecting fraudulent phishing sites using features of the web address and page.,1
+Smart Irrigation using IoT. Soil sensors decide when to water fields.,Watering crops automatically based on soil moisture sensors and weather data.,1
+Smart Attendance System using Face Recognition. Camera identifies students and marks attendance.,Stock Price Prediction using LSTM. Forecasts share prices from history.,0
+Crop Disease Detection using Deep Learning. CNN classifies leaf photos.,Music Recommendation System. Suggests songs from listening history.,0
+Fake News Detection using Machine Learning. Classifier labels news fake or real.,Air Quality Prediction. Regression models forecast pollution index in Bengaluru.,0
+Credit Card Fraud Detection. Models flag fraudulent transactions.,Voice Controlled Home Automation. Speech commands switch home appliances.,0
+Sign Language Translator. Hand gestures converted to text.,Diabetes Prediction. Health records predict diabetes risk.,0
+Online Exam Proctoring. Face and gaze monitoring flags cheating.,E-Waste Management Platform. Schedules recycling pickups for households.,0
+Traffic Sign Recognition. CNN classifies road signs for self-driving cars.,Library Book Recommendation Chatbot. Suggests books to students.,0
+Sentiment Analysis of Twitter Data. Tweets classified positive or negative.,Parking Slot Detection. CCTV finds empty parking spaces.,0
+Resume Screening using NLP. Ranks resumes against a job description.,Object Detection for Surveillance using YOLO. Detects people in CCTV video.,0
+Plant Leaf Disease Classification with CNN. Leaf images classified healthy or diseased.,Phishing Website Detection. Classifier spots fake websites from URL features.,0
+Online Exam Proctoring System. Cameras monitor students to flag cheating during tests.,AI invigilation that watches examinees through webcams and detects malpractice in online exams.,1
+Resume Screening using NLP. Resumes ranked against job descriptions.,Automatically shortlisting candidate CVs by matching them to a job posting with natural language processing.,1
+Music Recommendation System. Songs suggested from listening history.,Recommending tracks to a listener based on the music they have played before.,1
+Air Quality Prediction for Bengaluru. Models forecast the pollution index.,Predicting how polluted the air will be in the city using weather and pollutant measurements.,1
+E-Waste Management Platform. Households schedule electronic waste pickups.,A service that arranges collection and recycling of discarded electronics from homes.,1
+Parking Slot Availability Detection. CCTV finds free parking spaces.,Using parking lot cameras to tell drivers which parking spots are empty in real time.,1
+Chatbot for College Enquiry. Bot answers admission and fee questions.,A conversational assistant that responds to prospective students asking about courses and admissions.,1
+Voice Controlled Home Automation. Appliances switched by speech commands.,Controlling lights and fans at home by speaking to a voice assistant connected to relays.,1
+Sentiment Analysis of Twitter Data. Tweets labelled positive negative or neutral.,Classifying social media posts by the emotion and opinion they express.,1
+Traffic Sign Recognition for Autonomous Vehicles. CNN identifies road signs.,Recognising traffic signs from car camera images to support self driving.,1
+Diabetes Prediction using Machine Learning. Patient records predict diabetes risk.,Estimating a person's likelihood of diabetes from clinical measurements like glucose and BMI.,1
+Object Detection for Surveillance using YOLO. Detects people and vehicles in CCTV.,Real time detection of objects in security camera footage with a YOLO model.,1
+Hand Gesture Recognition for Sign Language. Gestures translated to text.,Interpreting hand movements from a camera to convert sign language into written words.,1
+Drowsiness Detection for Drivers. Eye and yawn monitoring alarms sleepy drivers.,Warning vehicle drivers when camera analysis shows they are falling asleep at the wheel.,1
+Smart Irrigation System using IoT and Machine Learning. Soil data drives watering.,Automated farm irrigation that waters only when soil moisture and forecasts say it is needed.,1
+Fake News Detection using Machine Learning. News text classified real or fake.,Spotting fabricated news articles automatically with a text classifier.,1
+Brain Tumour Detection from MRI Scans. Deep learning segments brain tumours.,Using neural networks on brain scan images to locate tumours for radiologists.,1
+Phishing Website Detection. URL features classify malicious sites.,Flagging fake login websites designed to steal credentials using machine learning on link features.,1
+Stock Price Prediction using LSTM. Time series model forecasts prices.,Forecasting equity prices from historical charts with a long short term memory network.,1
+Crop Disease Detection using Deep Learning. Leaf images diagnosed by CNN.,Diagnosing plant illnesses from photographs of leaves using convolutional networks.,1
+Online Exam Proctoring System. Cameras monitor students during tests.,Crop Yield Prediction using Machine Learning. Soil and rainfall predict harvest.,0
+Resume Screening using NLP. Resumes ranked for recruiters.,Water Quality Monitoring using IoT Sensors. pH and turbidity measured in lakes.,0
+Music Recommendation System. Songs suggested from listening history.,Blockchain Certificate Verification. Hashes verify degree authenticity.,0
+Air Quality Prediction for Bengaluru. Pollution index forecast.,Helmet Detection using Computer Vision. Riders without helmets are flagged.,0
+E-Waste Management Platform. Electronic waste pickup scheduling.,Document Question Answering with LLMs. Ask questions about uploaded PDFs.,0
+Parking Slot Availability Detection. CCTV finds free spaces.,Electricity Theft Detection. Smart meter data reveals power theft.,0
+Chatbot for College Enquiry. Admission questions answered.,Road Pothole Detection using Smartphone Sensors. Bumps map bad roads.,0
+Voice Controlled Home Automation. Speech switches appliances.,Personal Finance Tracker. Expenses categorised and spending predicted.,0
+Sentiment Analysis of Twitter Data. Opinion mining on tweets.,Smart Dustbin with Fill-Level Alerts. Bins report when full.,0
+Traffic Sign Recognition for Autonomous Vehicles. Road signs classified.,Hospital Appointment System. Doctor tokens and queues managed online.,0
+Diabetes Prediction using Machine Learning. Clinical risk scoring.,Wild Animal Intrusion Detection for Farms. Camera traps guard crops at night.,0
+Object Detection for Surveillance using YOLO. CCTV object detection.,Exam Question Paper Generator. Balanced papers built from a question bank.,0
+Hand Gesture Recognition for Sign Language. Gestures become text.,Credit Card Fraud Detection. Fraudulent payments flagged from transactions.,0
+Drowsiness Detection for Drivers. Sleepy driver alarm.,Fake News Detection using Machine Learning. News classified real or fake.,0
+Smart Irrigation System using IoT. Automated field watering.,Stock Price Prediction using LSTM. Share prices forecast from history.,0
+Phishing Website Detection. Malicious URLs classified.,Plant Leaf Disease Classification with CNN. Leaf photos diagnosed.,0
+Brain Tumour Detection from MRI Scans. Tumour segmentation.,Sentiment Analysis of Twitter Data. Tweets classified by opinion.,0
+College Enquiry Chatbot. Bot answers admission questions.,Traffic Sign Recognition. CNN classifies road signs for cars.,0
+Smart Attendance using Face Recognition. Faces mark attendance.,Air Quality Prediction. Pollution levels forecast for the city.,0
+Credit Card Fraud Detection. Transaction anomaly detection.,Voice Controlled Home Automation. Appliances controlled by speech.,0

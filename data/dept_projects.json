@@ -1,0 +1,182 @@
+[
+ {
+  "abstract": "Automated classroom attendance using facial recognition with OpenCV and deep learning embeddings. Students are identified from a live camera feed and attendance is marked in a database, replacing manual roll calls.",
+  "title": "Smart Attendance System using Face Recognition",
+  "year": 2025
+ },
+ {
+  "abstract": "Image classification system that detects diseases in crop leaves from photographs using a convolutional neural network, helping farmers identify infections early and choose treatment.",
+  "title": "Crop Disease Detection using Deep Learning",
+  "year": 2025
+ },
+ {
+  "abstract": "An NLP chatbot that answers frequently asked questions about admissions, fees, courses and campus facilities for prospective students, trained on college FAQ data.",
+  "title": "Chatbot for College Enquiry",
+  "year": 2024
+ },
+ {
+  "abstract": "Real-time recognition of hand gestures using MediaPipe and a neural network to translate sign language into text and speech for hearing-impaired communication.",
+  "title": "Hand Gesture Recognition for Sign Language Translation",
+  "year": 2025
+ },
+ {
+  "abstract": "Text classification system that labels news articles as fake or real using TF-IDF features and machine learning classifiers trained on labelled news datasets.",
+  "title": "Fake News Detection using Machine Learning",
+  "year": 2024
+ },
+ {
+  "abstract": "Convolutional neural network that classifies road traffic signs from camera images to assist self-driving and driver-assistance systems.",
+  "title": "Traffic Sign Recognition for Autonomous Vehicles",
+  "year": 2024
+ },
+ {
+  "abstract": "Natural language processing system that classifies tweets as positive, negative or neutral to analyse public opinion about products and events.",
+  "title": "Sentiment Analysis of Twitter Data",
+  "year": 2023
+ },
+ {
+  "abstract": "IoT sensors measure soil moisture and weather conditions, and a machine learning model predicts when to irrigate fields, reducing water usage in agriculture.",
+  "title": "Smart Irrigation System using IoT and Machine Learning",
+  "year": 2025
+ },
+ {
+  "abstract": "Machine learning models detect fraudulent credit card transactions from imbalanced transaction data using anomaly detection and classification techniques.",
+  "title": "Credit Card Fraud Detection",
+  "year": 2024
+ },
+ {
+  "abstract": "Home appliances are controlled through voice commands using speech recognition and an IoT relay module connected to a microcontroller.",
+  "title": "Voice Controlled Home Automation",
+  "year": 2023
+ },
+ {
+  "abstract": "A convolutional neural network classifies plant leaf images into healthy and diseased categories to support precision agriculture and early diagnosis.",
+  "title": "Plant Leaf Disease Classification with CNN",
+  "year": 2023
+ },
+ {
+  "abstract": "Automated screening of resumes against a job description using natural language processing and keyword similarity to rank candidates for recruiters.",
+  "title": "Resume Screening using NLP",
+  "year": 2025
+ },
+ {
+  "abstract": "Computer vision system monitors a driver's eyes and yawning from a dashboard camera and raises an alarm when drowsiness is detected to prevent accidents.",
+  "title": "Drowsiness Detection for Drivers",
+  "year": 2024
+ },
+ {
+  "abstract": "Long short-term memory neural network forecasts stock prices from historical time-series data for investment analysis.",
+  "title": "Stock Price Prediction using LSTM",
+  "year": 2023
+ },
+ {
+  "abstract": "Real-time object detection in CCTV video streams using the YOLO algorithm to identify people, vehicles and suspicious objects for security surveillance.",
+  "title": "Object Detection for Surveillance using YOLO",
+  "year": 2025
+ },
+ {
+  "abstract": "Classification models predict diabetes risk from patient health records such as glucose level, BMI and age using the Pima Indians diabetes dataset.",
+  "title": "Diabetes Prediction using Machine Learning",
+  "year": 2023
+ },
+ {
+  "abstract": "AI proctoring monitors students during online exams using face detection, gaze tracking and audio analysis to flag malpractice.",
+  "title": "Online Examination Proctoring System",
+  "year": 2025
+ },
+ {
+  "abstract": "Recommender system suggests songs based on user listening history using collaborative filtering and content-based audio features.",
+  "title": "Music Recommendation System",
+  "year": 2024
+ },
+ {
+  "abstract": "Machine learning regression models predict air quality index from pollutant and weather data collected across monitoring stations in Bengaluru.",
+  "title": "Air Quality Prediction for Bengaluru",
+  "year": 2025
+ },
+ {
+  "abstract": "Web platform connecting households with certified e-waste recyclers, scheduling pickups and tracking disposal of electronic waste.",
+  "title": "E-Waste Management Platform",
+  "year": 2024
+ },
+ {
+  "abstract": "Deep learning model segments and classifies brain MRI images to detect tumours and assist radiologists in early diagnosis.",
+  "title": "Brain Tumour Detection from MRI Scans",
+  "year": 2025
+ },
+ {
+  "abstract": "Computer vision system detects empty parking slots from CCTV footage of a parking lot and displays availability to drivers in real time.",
+  "title": "Parking Slot Availability Detection",
+  "year": 2023
+ },
+ {
+  "abstract": "Machine learning classifier identifies phishing websites from URL and page features to protect users from online fraud.",
+  "title": "Phishing Website Detection",
+  "year": 2024
+ },
+ {
+  "abstract": "Conversational assistant recommends library books to students based on their course, interests and borrowing history.",
+  "title": "Library Book Recommendation Chatbot",
+  "year": 2023
+ },
+ {
+  "title": "Blockchain-based Certificate Verification System",
+  "abstract": "Academic certificates are issued as hashes on a blockchain so employers can verify authenticity instantly and forgery is prevented.",
+  "year": 2025
+ },
+ {
+  "title": "Helmet Detection for Road Safety using Computer Vision",
+  "abstract": "A camera system detects two-wheeler riders not wearing helmets from traffic video and records number plates for enforcement.",
+  "year": 2024
+ },
+ {
+  "title": "Crop Yield Prediction using Machine Learning",
+  "abstract": "Regression models predict crop yield from soil, rainfall and satellite data to help farmers plan sowing and harvesting.",
+  "year": 2025
+ },
+ {
+  "title": "Water Quality Monitoring using IoT Sensors",
+  "abstract": "Sensors measure pH, turbidity and dissolved oxygen in water bodies and send real-time quality alerts to a dashboard.",
+  "year": 2024
+ },
+ {
+  "title": "Document Question Answering with LLMs",
+  "abstract": "Users upload PDF documents and ask questions in natural language; a retrieval-augmented LLM answers from the document content.",
+  "year": 2025
+ },
+ {
+  "title": "Electricity Theft Detection from Smart Meter Data",
+  "abstract": "Machine learning models analyse smart meter consumption patterns to detect electricity theft and meter tampering.",
+  "year": 2024
+ },
+ {
+  "title": "Road Pothole Detection using Smartphone Sensors",
+  "abstract": "Accelerometer and GPS data from smartphones detect potholes on roads and map them for municipal repair planning.",
+  "year": 2023
+ },
+ {
+  "title": "Smart Dustbin with Fill-Level Alerts",
+  "abstract": "An ultrasonic sensor measures waste fill level in public dustbins and alerts collection teams when a bin is nearly full.",
+  "year": 2023
+ },
+ {
+  "title": "Hospital Appointment and Queue Management System",
+  "abstract": "Patients book doctor appointments online and receive live token queue updates, reducing waiting room crowding.",
+  "year": 2024
+ },
+ {
+  "title": "Wild Animal Intrusion Detection for Farms",
+  "abstract": "Camera traps with object detection identify wild animals entering farmland at night and trigger alarms to protect crops.",
+  "year": 2025
+ },
+ {
+  "title": "Exam Question Paper Generator from Syllabus",
+  "abstract": "An NLP system generates balanced question papers from a question bank mapped to syllabus topics and Bloom's taxonomy levels.",
+  "year": 2023
+ },
+ {
+  "title": "Personal Finance Tracker with Expense Prediction",
+  "abstract": "A mobile app categorises personal expenses from SMS and bank data and predicts next month's spending using machine learning.",
+  "year": 2025
+ }
+]
