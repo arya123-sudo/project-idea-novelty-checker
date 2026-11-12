@@ -9,7 +9,7 @@ import os
 import re
 import httpx
 
-TIMEOUT = 12.0
+TIMEOUT = 8.0
 
 
 def _client(**kw):
@@ -43,7 +43,7 @@ async def search_arxiv(title, abstract, embedder, query_vec, k=3):
     if not words:
         return []
     q = "+AND+".join(f"all:{w}" for w in words[:3])
-    url = f"https://export.arxiv.org/api/query?search_query={q}&start=0&max_results=8"
+    url = f"https://export.arxiv.org/api/query?search_query={q}&start=0&max_results=6"
     try:
         async with _client(headers=HEADERS) as c:
             r = await c.get(url)
@@ -69,7 +69,7 @@ async def search_github(title, abstract, embedder, query_vec, k=3):
         return []
     try:
         async with _client(headers={"Accept": "application/vnd.github+json", **HEADERS}) as c:
-            r = await c.get(f"https://api.github.com/search/repositories?q={q}&per_page=8")
+            r = await c.get(f"https://api.github.com/search/repositories?q={q}&per-page=6")
             r.raise_for_status()
         cands = [{
             "source": "GitHub", "title": it["full_name"],
@@ -93,7 +93,7 @@ async def search_semantic_scholar(title, abstract, embedder, query_vec, k=3):
         async with _client(headers=HEADERS) as c:
             r = await c.get(
                 "https://api.semanticscholar.org/graph/v1/paper/search",
-                params={"query": q, "limit": 8,
+                params={"query": q, "limit": 6,
                         "fields": "title,abstract,year,venue,url"},
             )
             r.raise_for_status()
@@ -117,7 +117,7 @@ async def search_openalex(title, abstract, embedder, query_vec, k=3):
     try:
         async with _client(headers=HEADERS) as c:
             r = await c.get("https://api.openalex.org/works",
-                            params={"search": q, "per-page": 8})
+                            params={"search": q, "per-page": 6})
             r.raise_for_status()
         cands = []
         for w in r.json().get("results", []):

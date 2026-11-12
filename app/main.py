@@ -99,13 +99,19 @@ async def check(req: CheckRequest):
     query_vec = embedder.encode(query_text)
     matches = dept.search(query_vec, k=5)
     if req.check_external:
-        # Sequential on purpose: the public APIs rate-limit per IP, and
-        # parallel bursts from one address get throttled (observed 429s).
-        # Each source fails soft, so a throttled source never breaks the check.
-        matches += await search_arxiv(req.title, req.abstract, embedder, query_vec, k=3)
-        matches += await search_github(req.title, req.abstract, embedder, query_vec, k=3)
-        matches += await search_semantic_scholar(req.title, req.abstract, embedder, query_vec, k=3)
-        matches += await search_openalex(req.title, req.abstract, embedder, query_vec, k=3)
+        # All four sources in parallel — sequential calls made a full check
+        # take ~30 s. Each source still fails soft on rate limits.
+        import asyncio
+        extra = await asyncio.gather(
+            search_arxiv(req.title, req.abstract, embedder, query_vec, k=3),
+            search_github(req.title, req.abstract, embedder, query_vec, k=3),
+            search_semantic_scholar(req.title, req.abstract, embedder, query_vec, k=3),
+            search_openalex(req.title, req.abstract, embedder, query_vec, k=3),
+            return_exceptions=True,
+        )
+        for lst in extra:
+            if isinstance(lst, list):
+                matches += lst
     matches.sort(key=lambda m: m["similarity"], reverse=True)
     for m in matches:
         m["shared_terms"] = shared_terms(query_text, f"{m['title']}. {m.get('abstract') or ''}")
