@@ -69,7 +69,8 @@ Backend: FastAPI. Frontend: single-page web UI for students/faculty. If SBERT is
 
 - `app/embedder.py` — SBERT embedder (TF-IDF fallback), L2-normalised vectors so inner product = cosine similarity.
 - `app/indexer.py` — FAISS `IndexFlatIP` over the department corpus (36 sample projects in the demo dataset; to be replaced by the real department archive).
-- `app/external.py` — live arXiv API and GitHub Search API calls; keyword candidates are **re-ranked by embedding similarity**, which is what surfaces paraphrases that keyword ranking alone buries.
+- `app/external.py` — live arXiv, GitHub, **Semantic Scholar** and **OpenAlex** API calls; keyword candidates are **re-ranked by embedding similarity**, which is what surfaces paraphrases that keyword ranking alone buries. Semantic Scholar and OpenAlex between them index IEEE and Elsevier content, extending coverage to those publishers without their key-gated APIs; all external sources fail soft under rate limits so a throttled source never breaks a check.
+- `app/main.py` also computes an **evidence-based gap analysis** from the retrieved matches: concepts in the idea that no close prior work covers, sources where nothing close was retrieved, and the implementation gap when no similar code exists. Every line is computed from evidence — deliberately not an LLM's opinion (see the LLM-judge instability evidence in the literature survey).
 - `app/main.py` — `POST /api/check` returning score, verdict and top matches across all three sources.
 - `app/indexer.py` also computes **neighbourhood density**: mean similarity to the 5 nearest department projects (topic *crowdedness*, inspired by Wang et al. 2025), reported alongside the score.
 - `app/main.py` generates an **evidence explanation** for every verdict — closest prior work vs the 0.55 duplicate threshold, crowdedness reading, and the distinctive shared concepts per match — so the verdict can be argued with, not just accepted.

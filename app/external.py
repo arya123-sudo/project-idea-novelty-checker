@@ -82,6 +82,60 @@ async def search_github(title, abstract, embedder, query_vec, k=3):
     return _rerank(cands, embedder, query_vec, k)
 
 
+async def search_semantic_scholar(title, abstract, embedder, query_vec, k=3):
+    """Semantic Scholar indexes 200M+ papers including IEEE and Elsevier
+    content, so this one free API extends coverage to those publishers
+    without their key-gated APIs."""
+    q = " ".join(_keywords(title, abstract, 6))
+    if not q:
+        return []
+    try:
+        async with _client(headers=HEADERS) as c:
+            r = await c.get(
+                "https://api.semanticscholar.org/graph/v1/paper/search",
+                params={"query": q, "limit": 8,
+                        "fields": "title,abstract,year,venue,url"},
+            )
+            r.raise_for_status()
+        cands = [{
+            "source": "Semantic Scholar", "title": p["title"],
+            "abstract": (p.get("abstract") or "")[:400],
+            "year": p.get("year"), "url": p.get("url"),
+            "venue": p.get("venue") or None,
+        } for p in r.json().get("data", []) if p.get("title")]
+    except Exception:
+        return []
+    return _rerank(cands, embedder, query_vec, k)
+
+
+async def search_openalex(title, abstract, embedder, query_vec, k=3):
+    """OpenAlex (250M+ works, fully open) — abstracts arrive as an inverted
+    index and are reconstructed; venue names surface IEEE/Elsevier journals."""
+    q = " ".join(_keywords(title, abstract, 6))
+    if not q:
+        return []
+    try:
+        async with _client(headers=HEADERS) as c:
+            r = await c.get("https://api.openalex.org/works",
+                            params={"search": q, "per-page": 8})
+            r.raise_for_status()
+        cands = []
+        for w in r.json().get("results", []):
+            inv = w.get("abstract_inverted_index") or {}
+            words = sorted(((pos, word) for word, poss in inv.items() for pos in poss))
+            text = " ".join(word for _, word in words)[:400]
+            src = ((w.get("primary_location") or {}).get("source") or {}).get("display_name")
+            cands.append({
+                "source": "OpenAlex", "title": w.get("title") or "",
+                "abstract": text, "year": w.get("publication_year"),
+                "url": w.get("doi") or w.get("id"), "venue": src,
+            })
+        cands = [c for c in cands if c["title"]]
+    except Exception:
+        return []
+    return _rerank(cands, embedder, query_vec, k)
+
+
 def _rerank(cands, embedder, query_vec, k):
     if not cands:
         return []

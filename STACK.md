@@ -38,6 +38,10 @@ Every component of the Novelty Checker, what it does, and why it's there.
 | **Department corpus** (`data/dept_projects.json`, 36 projects) | ⚠️ SAMPLE data — representative topics standing in for the real Acharya AIML archive; replacing this one file upgrades the system to real data |
 | **arXiv API** (export.arxiv.org) | Live candidate papers by keyword, then re-ranked by embedding similarity |
 | **GitHub Search API** | Live candidate repositories by keyword, then re-ranked by embedding similarity |
+| **Semantic Scholar API** (free, no key) | 200M+ papers — **indexes IEEE and Elsevier content**, so their papers surface here with venue names, without the paid IEEE/Elsevier APIs. Best-effort: the unauthenticated tier rate-limits, and the source fails soft |
+| **OpenAlex API** (free, no key) | 250M+ works; abstracts reconstructed from its inverted index; venue names surface IEEE/Elsevier journals. Also best-effort under its free daily budget |
+| **Gap analysis** (own code in `app/main.py`) | Evidence-based, not generative: uncovered concepts, open sources, implementation gap — computed from the retrieved matches |
+| CORE API | Not integrated: its search API now requires a personal API key; Semantic Scholar + OpenAlex already cover its open-access corpus for this use |
 
 ## 5. Evaluation (all measured, none assumed)
 

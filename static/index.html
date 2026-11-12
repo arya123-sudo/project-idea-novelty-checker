@@ -41,7 +41,7 @@
     <textarea id="abstract" placeholder="Describe what the project does, the method, and who it is for..."></textarea>
     <div class="row">
       <button id="go">Check Novelty</button>
-      <label class="chk"><input type="checkbox" id="ext" checked style="width:auto"> Also search arXiv + GitHub (live)</label>
+      <label class="chk"><input type="checkbox" id="ext" checked style="width:auto"> Also search arXiv, GitHub, Semantic Scholar + OpenAlex (live; S2/OpenAlex index IEEE & Elsevier papers)</label>
       <span id="status" class="chk"></span>
     </div>
   </div>
@@ -53,6 +53,8 @@
     </div>
     <div id="explain" style="background:#12172e;border:1px solid #2c3355;border-radius:8px;padding:12px 14px;margin-top:16px;font-size:14px;line-height:1.5"></div>
     <div id="density" style="margin-top:10px;font-size:13px;color:#9aa3c0"></div>
+    <h3 style="margin:18px 0 4px">Research Gaps &amp; How to Differentiate</h3>
+    <ul id="gaps" style="margin:4px 0 0;padding-left:18px;font-size:14px;line-height:1.55"></ul>
     <h3 style="margin:20px 0 4px">Closest Matches</h3>
     <div id="matches"></div>
   </div>
@@ -63,7 +65,7 @@ const $=id=>document.getElementById(id);
 $('go').onclick=async()=>{
   const title=$('title').value.trim(), abstract=$('abstract').value.trim();
   if(!title||!abstract){alert('Enter both a title and an abstract.');return;}
-  $('go').disabled=true; $('status').textContent='Embedding + searching dept, arXiv, GitHub…';
+  $('go').disabled=true; $('status').textContent='Embedding + searching dept, arXiv, GitHub, Semantic Scholar, OpenAlex…';
   try{
     const r=await fetch('/api/check',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({title,abstract,check_external:$('ext').checked})});
@@ -74,9 +76,10 @@ $('go').onclick=async()=>{
     $('fill').style.width=d.novelty_score+'%'; $('fill').style.background=col; $('score').style.color=col;
     $('explain').textContent='Why this verdict: '+d.explanation;
     const dn=d.density||{}; $('density').textContent=`Topic crowdedness check — uncrowdedness score ${dn.crowdedness_score}/100 (avg similarity to 5 nearest department projects: ${((dn.local_crowding||0)*100).toFixed(0)}%). High crowding means the area is heavily worked even without one exact duplicate.`;
+    $('gaps').innerHTML=(d.gap_analysis||[]).map(g=>`<li>${g}</li>`).join('')||'<li>No specific gaps computed.</li>';
     $('matches').innerHTML=d.closest_matches.map(m=>`
       <div class="match"><span class="sim" style="color:${m.similarity>=0.7?'#e74c3c':m.similarity>=0.45?'#f5b942':'#2ecc71'}">${(m.similarity*100).toFixed(0)}% similar</span>
-      <span class="src">${m.source}${m.year?' · '+m.year:''}</span><b>${m.url?`<a href="${m.url}" target="_blank">${m.title}</a>`:m.title}</b>
+      <span class="src">${m.source}${m.year?' · '+m.year:''}${m.venue?' · '+m.venue:''}</span><b>${m.url?`<a href="${m.url}" target="_blank">${m.title}</a>`:m.title}</b>
       <div class="abs">${(m.abstract||'').slice(0,220)}</div>
       ${(m.shared_terms&&m.shared_terms.length)?`<div style="margin-top:4px">${m.shared_terms.map(t=>`<span style="background:#232949;border-radius:10px;padding:1px 8px;font-size:11px;margin-right:4px">${t}</span>`).join('')}</div>`:''}</div>`).join('')||'<p>No matches found.</p>';
     $('result').classList.remove('hidden');

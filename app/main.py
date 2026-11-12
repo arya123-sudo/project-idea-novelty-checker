@@ -15,9 +15,10 @@ from pydantic import BaseModel
 
 from .embedder import Embedder
 from .indexer import DeptIndex, load_corpus
-from .external import search_arxiv, search_github
+from .external import (search_arxiv, search_github, search_semantic_scholar,
+                       search_openalex)
 
-STOPWORDS = set("a an the of for to in on and or with using use used based system systems application app project model models data user users".split())
+STOPWORDS = set("a an the of for to in on and or with using use used based system systems application app project model models data user users time one two new also can will helps help early many much different inside within among across via per".split())
 DUPLICATE_THRESHOLD = 0.55  # operating point from the 60-pair evaluation
 
 
@@ -57,14 +58,54 @@ def health():
     return {"status": "ok", "embedder": embedder.backend, "dept_projects": len(_corpus)}
 
 
+def gap_analysis(req, matches, density, external: bool):
+    """Evidence-based research-gap analysis. Every line is computed from the
+    retrieved matches themselves — no generative opinion: concepts in the
+    idea that no close prior work covers, sources where nothing close
+    exists, and the implementation gap when no similar code exists."""
+    gaps = []
+    corpus_text = " ".join(f"{m['title']} {m.get('abstract') or ''}" for m in matches[:8]).lower()
+
+    def root(w):  # crude singular so crops~crop, photos~photographs match
+        return w[:-1] if len(w) > 4 and w.endswith("s") else w
+
+    corpus_roots = {root(w) for w in re.findall(r"[a-z]{4,}", corpus_text)}
+    concepts = []
+    for w in re.findall(r"[a-z]{4,}", f"{req.title} {req.abstract}".lower()):
+        if w not in STOPWORDS and w not in concepts:
+            concepts.append(w)
+    uncovered = [c for c in concepts
+                 if root(c) not in corpus_roots
+                 and not any(r.startswith(root(c)[:5]) for r in corpus_roots)][:4]
+    for c in uncovered:
+        gaps.append(f"Concept “{c}” appears in your idea but in none of the closest prior work — "
+                    f"this is a differentiating angle; state it explicitly in the synopsis.")
+    sources = ["Department"] + (["arXiv", "GitHub", "Semantic Scholar", "OpenAlex"] if external else [])
+    for s in sources:
+        best = max([m["similarity"] for m in matches if m["source"] == s], default=0.0)
+        if best < 0.45:
+            gaps.append(f"No close prior work retrieved from {s} in this check (best match {best:.0%}) — that channel looks open.")
+    gh = max([m["similarity"] for m in matches if m["source"] == "GitHub"], default=0.0)
+    if external and gh < 0.45:
+        gaps.append("No close GitHub implementation exists — building a working implementation is itself a contribution.")
+    if density["local_crowding"] >= 0.35:
+        gaps.append("Caution: the department topic area is crowded — novelty must come from method or application, not the topic alone.")
+    return gaps
+
+
 @app.post("/api/check")
 async def check(req: CheckRequest):
     query_text = f"{req.title}. {req.abstract}"
     query_vec = embedder.encode(query_text)
     matches = dept.search(query_vec, k=5)
     if req.check_external:
+        # Sequential on purpose: the public APIs rate-limit per IP, and
+        # parallel bursts from one address get throttled (observed 429s).
+        # Each source fails soft, so a throttled source never breaks the check.
         matches += await search_arxiv(req.title, req.abstract, embedder, query_vec, k=3)
         matches += await search_github(req.title, req.abstract, embedder, query_vec, k=3)
+        matches += await search_semantic_scholar(req.title, req.abstract, embedder, query_vec, k=3)
+        matches += await search_openalex(req.title, req.abstract, embedder, query_vec, k=3)
     matches.sort(key=lambda m: m["similarity"], reverse=True)
     for m in matches:
         m["shared_terms"] = shared_terms(query_text, f"{m['title']}. {m.get('abstract') or ''}")
@@ -97,9 +138,10 @@ async def check(req: CheckRequest):
         "verdict": verdict_for(score),
         "max_similarity": max_sim,
         "embedder": embedder.backend,
-        "closest_matches": matches[:8],
+        "closest_matches": matches[:10],
         "density": density,
         "explanation": explanation,
+        "gap_analysis": gap_analysis(req, matches, density, req.check_external),
     }
 
 
