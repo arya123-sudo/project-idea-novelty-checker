@@ -9,7 +9,7 @@ import os
 import re
 import httpx
 
-TIMEOUT = 8.0
+TIMEOUT = 6.0
 
 
 def _client(**kw):
@@ -38,12 +38,12 @@ def _keywords(title: str, abstract: str, n=8):
 HEADERS = {"User-Agent": "NoveltyChecker/1.0 (student mini-project)"}
 
 
-async def search_arxiv(title, abstract, embedder, query_vec, k=3):
+async def search_arxiv(title, abstract, embedder, query_vec, k=3, raw=False):
     words = _keywords(title, abstract, 5)
     if not words:
         return []
     q = "+AND+".join(f"all:{w}" for w in words[:3])
-    url = f"https://export.arxiv.org/api/query?search_query={q}&start=0&max_results=6"
+    url = f"https://export.arxiv.org/api/query?search_query={q}&start=0&max_results=5"
     try:
         async with _client(headers=HEADERS) as c:
             r = await c.get(url)
@@ -60,16 +60,16 @@ async def search_arxiv(title, abstract, embedder, query_vec, k=3):
                 cands.append({"source": "arXiv", "title": t, "abstract": s[:400], "year": None, "url": link})
     except Exception:
         return []
-    return _rerank(cands, embedder, query_vec, k)
+    return cands if raw else _rerank(cands, embedder, query_vec, k)
 
 
-async def search_github(title, abstract, embedder, query_vec, k=3):
+async def search_github(title, abstract, embedder, query_vec, k=3, raw=False):
     q = "+".join(_keywords(title, abstract, 5))
     if not q:
         return []
     try:
         async with _client(headers={"Accept": "application/vnd.github+json", **HEADERS}) as c:
-            r = await c.get(f"https://api.github.com/search/repositories?q={q}&per-page=6")
+            r = await c.get(f"https://api.github.com/search/repositories?q={q}&per-page=5")
             r.raise_for_status()
         cands = [{
             "source": "GitHub", "title": it["full_name"],
@@ -79,10 +79,10 @@ async def search_github(title, abstract, embedder, query_vec, k=3):
         } for it in r.json().get("items", [])]
     except Exception:
         return []
-    return _rerank(cands, embedder, query_vec, k)
+    return cands if raw else _rerank(cands, embedder, query_vec, k)
 
 
-async def search_semantic_scholar(title, abstract, embedder, query_vec, k=3):
+async def search_semantic_scholar(title, abstract, embedder, query_vec, k=3, raw=False):
     """Semantic Scholar indexes 200M+ papers including IEEE and Elsevier
     content, so this one free API extends coverage to those publishers
     without their key-gated APIs."""
@@ -93,7 +93,7 @@ async def search_semantic_scholar(title, abstract, embedder, query_vec, k=3):
         async with _client(headers=HEADERS) as c:
             r = await c.get(
                 "https://api.semanticscholar.org/graph/v1/paper/search",
-                params={"query": q, "limit": 6,
+                params={"query": q, "limit": 5,
                         "fields": "title,abstract,year,venue,url"},
             )
             r.raise_for_status()
@@ -105,10 +105,10 @@ async def search_semantic_scholar(title, abstract, embedder, query_vec, k=3):
         } for p in r.json().get("data", []) if p.get("title")]
     except Exception:
         return []
-    return _rerank(cands, embedder, query_vec, k)
+    return cands if raw else _rerank(cands, embedder, query_vec, k)
 
 
-async def search_openalex(title, abstract, embedder, query_vec, k=3):
+async def search_openalex(title, abstract, embedder, query_vec, k=3, raw=False):
     """OpenAlex (250M+ works, fully open) — abstracts arrive as an inverted
     index and are reconstructed; venue names surface IEEE/Elsevier journals."""
     q = " ".join(_keywords(title, abstract, 6))
@@ -117,7 +117,7 @@ async def search_openalex(title, abstract, embedder, query_vec, k=3):
     try:
         async with _client(headers=HEADERS) as c:
             r = await c.get("https://api.openalex.org/works",
-                            params={"search": q, "per-page": 6})
+                            params={"search": q, "per-page": 5})
             r.raise_for_status()
         cands = []
         for w in r.json().get("results", []):
@@ -133,7 +133,7 @@ async def search_openalex(title, abstract, embedder, query_vec, k=3):
         cands = [c for c in cands if c["title"]]
     except Exception:
         return []
-    return _rerank(cands, embedder, query_vec, k)
+    return cands if raw else _rerank(cands, embedder, query_vec, k)
 
 
 def _rerank(cands, embedder, query_vec, k):

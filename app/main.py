@@ -93,25 +93,41 @@ def gap_analysis(req, matches, density, external: bool):
     return gaps
 
 
+_CACHE = {}
+
+
 @app.post("/api/check")
 async def check(req: CheckRequest):
+    cache_key = (req.title.strip().lower(), req.abstract.strip().lower(), req.check_external)
+    if cache_key in _CACHE:
+        return _CACHE[cache_key]
     query_text = f"{req.title}. {req.abstract}"
     query_vec = embedder.encode(query_text)
     matches = dept.search(query_vec, k=5)
     if req.check_external:
-        # All four sources in parallel — sequential calls made a full check
-        # take ~30 s. Each source still fails soft on rate limits.
+        # Fetch all sources in parallel, then encode every candidate in ONE
+        # batch — on the free tier's small CPU, per-source encoding rounds
+        # were most of the wait. Each source fails soft on rate limits.
         import asyncio
-        extra = await asyncio.gather(
-            search_arxiv(req.title, req.abstract, embedder, query_vec, k=3),
-            search_github(req.title, req.abstract, embedder, query_vec, k=3),
-            search_semantic_scholar(req.title, req.abstract, embedder, query_vec, k=3),
-            search_openalex(req.title, req.abstract, embedder, query_vec, k=3),
+        fetched = await asyncio.gather(
+            search_arxiv(req.title, req.abstract, embedder, query_vec, raw=True),
+            search_github(req.title, req.abstract, embedder, query_vec, raw=True),
+            search_semantic_scholar(req.title, req.abstract, embedder, query_vec, raw=True),
+            search_openalex(req.title, req.abstract, embedder, query_vec, raw=True),
             return_exceptions=True,
         )
-        for lst in extra:
-            if isinstance(lst, list):
-                matches += lst
+        pool = [c for lst in fetched if isinstance(lst, list) for c in lst]
+        if pool:
+            vecs = embedder.encode([f"{c['title']}. {c['abstract']}" for c in pool])
+            sims = (vecs @ query_vec.T).ravel()
+            for c, s in zip(pool, sims):
+                c["similarity"] = round(float(s), 4)
+            by_source = {}
+            for c in pool:
+                by_source.setdefault(c["source"], []).append(c)
+            for lst in by_source.values():
+                lst.sort(key=lambda m: m["similarity"], reverse=True)
+                matches += lst[:3]
     matches.sort(key=lambda m: m["similarity"], reverse=True)
     for m in matches:
         m["shared_terms"] = shared_terms(query_text, f"{m['title']}. {m.get('abstract') or ''}")
@@ -139,7 +155,7 @@ async def check(req: CheckRequest):
             f"department projects is {density['local_crowding']:.0%}, so the proposal must state "
             f"its difference explicitly."
         )
-    return {
+    result = {
         "novelty_score": score,
         "verdict": verdict_for(score),
         "max_similarity": max_sim,
@@ -149,6 +165,10 @@ async def check(req: CheckRequest):
         "explanation": explanation,
         "gap_analysis": gap_analysis(req, matches, density, req.check_external),
     }
+    if len(_CACHE) > 32:
+        _CACHE.clear()
+    _CACHE[cache_key] = result
+    return result
 
 
 app.mount("/static", StaticFiles(directory=BASE / "static"), name="static")
